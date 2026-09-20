@@ -35,10 +35,11 @@ async def get_openai_file(file_ref):
             )
     elif isinstance(file_ref, dict):
         url = (
-            file_ref.get("download_url")
-            or file_ref.get("url")
-            or file_ref.get("file_url")
-        )
+    file_ref.get("download_link")
+    or file_ref.get("download_url")
+    or file_ref.get("url")
+    or file_ref.get("file_url")
+)
 
         if not url:
             raise HTTPException(
