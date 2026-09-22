@@ -3,6 +3,8 @@ import asyncio
 
 import httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
+from urllib.parse import quote
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -275,6 +277,7 @@ async def generate(request: GenerateRequest):
     video_url = await get_video_url(request_id)
 
     return {
-        "status": "completed",
-        "video_url": video_url,
-    }
+    "status": "completed",
+    "video_url": video_url,
+    "download_url": f"https://kling-image-animator.onrender.com/download?url={quote(video_url, safe='')}",
+}
