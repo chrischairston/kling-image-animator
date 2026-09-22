@@ -236,7 +236,28 @@ async def get_video_url(request_id):
 
     return video_url
 
+async def stream_video(url):
+    async with httpx.AsyncClient(timeout=120) as client:
+        async with client.stream("GET", url) as response:
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=502,
+                    detail="Could not download the generated video."
+                )
 
+            async for chunk in response.aiter_bytes():
+                yield chunk
+
+
+@app.get("/download")
+async def download_video(url: str):
+    return StreamingResponse(
+        stream_video(url),
+        media_type="video/mp4",
+        headers={
+            "Content-Disposition": "attachment; filename=generated-video.mp4"
+        }
+    )
 @app.post("/generate")
 async def generate(request: GenerateRequest):
 
