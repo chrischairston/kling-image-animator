@@ -101,9 +101,9 @@ async def upload_to_pika(image_bytes, content_type):
                 detail=f"Pika upload initialization failed: {response.text}"
             )
 
-        upload_info = response.json()
-        print("Pika upload response keys:", list(upload_info.keys()))
+        upload_info = response.json()print("Pika upload response keys:", list(upload_info.keys()))
 print("Pika returned header names:", list((upload_info.get("headers") or {}).keys()))
+
 
         upload_url = upload_info.get("upload_url")
         permanent_url = upload_info.get("url")
