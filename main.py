@@ -1,4 +1,4 @@
-import os
+my import os
 import asyncio
 
 import httpx
@@ -123,8 +123,7 @@ print("Pika returned header names:", list((upload_info.get("headers") or {}).key
         if put_response.status_code not in (200, 201):
             raise HTTPException(
                 status_code=502,
-                detail=f"Pika image upload failed: HTTP {put_response.status_code}: {put_response.text[:500]} | content_type={content_type!r} | bytes={len(image_bytes)}"
-            )
+                detail=f"Pika image upload failed: HTTP {put_response.status_code}"
 
     return permanent_url
 
