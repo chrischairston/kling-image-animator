@@ -72,8 +72,6 @@ async def get_openai_file(file_ref):
 
 
 async def upload_to_pika(image_bytes, content_type):
-
-async def upload_to_pika(image_bytes, content_type):
     if not PIKA_API_KEY:
         raise HTTPException(
             status_code=500,
