@@ -1,4 +1,4 @@
-my import os
+import os
 import asyncio
 
 import httpx
