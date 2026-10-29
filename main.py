@@ -121,7 +121,7 @@ async def upload_to_pika(image_bytes, content_type):
         if put_response.status_code not in (200, 201):
             raise HTTPException(
                 status_code=502,
-                detail=f"Pika image upload failed: HTTP {put_response.status_code}"
+                detail=f"Pika image upload failed: HTTP {put_response.status_code}: {put_response.text[:500]}"
             )
 
     return permanent_url
