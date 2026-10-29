@@ -72,6 +72,8 @@ async def get_openai_file(file_ref):
 
 
 async def upload_to_pika(image_bytes, content_type):
+
+async def upload_to_pika(image_bytes, content_type):
     if not PIKA_API_KEY:
         raise HTTPException(
             status_code=500,
@@ -98,13 +100,14 @@ async def upload_to_pika(image_bytes, content_type):
         if response.status_code != 200:
             raise HTTPException(
                 status_code=502,
-                detail=f"Pika upload initialization failed: {response.text}"
+                detail=(
+                    f"Pika upload initialization failed: "
+                    f"HTTP {response.status_code}: "
+                    f"{response.text[:300]}"
+                ),
             )
 
-        upload_info = response.json()print("Pika upload response keys:", list(upload_info.keys()))
-print("Pika returned header names:", list((upload_info.get("headers") or {}).keys()))
-
-
+        upload_info = response.json()
         upload_url = upload_info.get("upload_url")
         permanent_url = upload_info.get("url")
 
@@ -114,19 +117,29 @@ print("Pika returned header names:", list((upload_info.get("headers") or {}).key
                 detail="Pika did not return the expected upload URLs."
             )
 
+        # Use the headers returned by Pika when provided.
+        put_headers = upload_info.get("headers")
+
+        if not isinstance(put_headers, dict) or not put_headers:
+            put_headers = {"Content-Type": content_type}
+
         put_response = await client.put(
             upload_url,
             content=image_bytes,
-            headers={"Content-Type": content_type},
+            headers=put_headers,
         )
 
         if put_response.status_code not in (200, 201):
             raise HTTPException(
                 status_code=502,
-                detail=f"Pika image upload failed: HTTP {put_response.status_code}"
+                detail=(
+                    f"Pika image upload failed: "
+                    f"HTTP {put_response.status_code}: "
+                    f"{put_response.text[:300]}"
+                ),
+            )
 
     return permanent_url
-
 
 async def start_kling(image_url, prompt):
     headers = {
